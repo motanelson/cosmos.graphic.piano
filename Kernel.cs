@@ -322,7 +322,7 @@ void redrawWindow(windowss www)
 
 
                     int ix = ((int)Sys.MouseManager.X)/80*10;
-                    int iy = ((int)Sys.MouseManager.X) / 60 * 100+200;
+                    int iy = ((int)Sys.MouseManager.Y) / 60 * 100+200;
                     Console.Beep(ix+iy,100);
                     
                     //c1 = false;
