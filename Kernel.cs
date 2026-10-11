@@ -162,7 +162,7 @@ void redrawWindow(windowss www)
         }
         mmouse drawcursor()
         {
-            Pen pen = new Pen(Color.DarkGreen);
+            Pen pen = new Pen(Color.Black);
             int n = 0;
             int x = 0;
             int y = 0;
@@ -181,18 +181,10 @@ void redrawWindow(windowss www)
                 y = (int)Sys.MouseManager.Y;
                 xxxx = x;
                 yyyy = y;
-            }
-            else
-            {
-                x = (int)Sys.MouseManager.X;
-                n = 0;
-                y = (int)Sys.MouseManager.Y;
-                xxxx = x;
-                yyyy = y;
-                xxxx=x;
-                yyyy=y;
                 getCursor(cursors.dc, x, y);
+                c1 = true;
             }
+            
 
             
             while (n == 0)
@@ -202,26 +194,20 @@ void redrawWindow(windowss www)
                 y = (int)Sys.MouseManager.Y;
                 if (x != xx || y != yy)
                 {
-                    if (!c1)
-                    {
-                        xx = x;
-                        yy = y;
-                        getCursor(cursors.dc, x, y);
-                        c1 = true;
-                    }
-                    else
-                    {
+                    
+                    
 
                         canvas.DrawImage(cursors.dc, new Point(xx, yy));
                         getCursor(cursors.dc, x, y);
                         canvas.DrawFilledEllipse(new Pen(colorCursor), new Point(x + (cursorSize / 2), y + (cursorSize / 2)), (cursorSize - 1) / 2, (cursorSize - 1) / 2);
-                        xx = x;
+                    //    
+                    xx = x;
                         yy = y;
                         xxxx = xx;
                         yyyy = yy;
                         canvas.Display();
 
-                    }
+                    
                 }
 
             }
@@ -320,12 +306,12 @@ void redrawWindow(windowss www)
                 if (Mmouse.clicks > 0)
                 {
 
-
-                    int ix = ((int)Sys.MouseManager.X)/80*10;
-                    int iy = ((int)Sys.MouseManager.Y) / 60 * 100+200;
+                    
+                    int ix =Mmouse.xx/80*10;
+                    int iy =Mmouse.yy / 60 * 100+200;
                     Console.Beep(ix+iy,100);
                     
-                    //c1 = false;
+                    c1 = false;
                         
                     
 
