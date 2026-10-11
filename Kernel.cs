@@ -3,142 +3,340 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
-using System.Threading;
+using Point = Cosmos.System.Graphics.Point;
 using Sys = Cosmos.System;
+using Cosmos.HAL;
+using Cosmos.Core.IOGroup;
+using System.Linq;
+using Cosmos.System.Graphics.Extensions;
 
-namespace Cosmosbuttons
+namespace CosmosKernel4
 {
-    class graf
+
+    public class windowss
     {
-        public static Canvas canvas;
-        public static Bitmap bitmap;
-
-        public static void Points(int x, int y)
-        {
-
-
-            Pen p = new Pen(Color.FromArgb(0, 0, 0));
-            canvas.DrawPoint(p, x, y);
-
-
-
-
-
-        }
-
-        public static void starts()
-        {
-
-
-            canvas = FullScreenCanvas.GetFullScreenCanvas();
-            Sys.MouseManager.ScreenWidth = (uint)1023;
-            Sys.MouseManager.ScreenHeight = (uint)798;
-
-
-
-        }
-        public static void displays()
-        {
-
-            canvas.Display();
-
-
-        }
-        public static void cls(Color c)
-        {
-
-
-            canvas.Clear(c);
-
-        }
-
+        public int x = 0;
+        public int y = 0;
+        public int w = 0;
+        public int h = 0;
+        public Bitmap dc;
+        public int colorss;
     }
-
-
+    public class mmouse
+    {
+        public int xx = 0;
+        public int yy = 0;
+        public int ini = 0;
+        public int clicks =0;
+    }
     public class Kernel : Sys.Kernel
     {
-        static int x = 0; static int y = 0;
+        Canvas canvas;
+        int maxy;
+        int maxx;
+        public int maxwins=10;
+        int cursorSize;
+        int xxxx = 0;
+        int yyyy = 0;
+        Color colorCursor;
+        Color desktopColor;
+        windowss cursors;
+        Boolean Mmouseini = false;
+        Boolean c1 = false;
+        int[] zorder;
+        int zorderCount = 0;
+        int parts(int i, int t)
+        {
+            return i / t;
+        }
+        void getCursor(Bitmap bts, int x, int y)
+        {
+            int n = 0;
+            int nn = 0;
+            for (n = 0; n < cursorSize; n++)
+            {
+                for (nn = 0; nn < cursorSize; nn++)
+                {
+                    psets(bts, nn, n, canvas.GetPointColor(x + nn, y + n).ToArgb());
+                }
+            }
+        }
+
+        void drawWindows(windowss[] wins)
+        {
+            int n = 0;
+            canvas.Clear(desktopColor);
+            for (n = 0; n < wins.Length; n++)
+            {
+                canvas.DrawImage(wins[zorder[n]].dc, new Point(wins[zorder[n]].x, wins[zorder[n]].y));
+            }
+            canvas.Display();
+        }
+void redrawWindow(windowss www)
+        {
+           
+            fills(www.dc, www.colorss);
+            rets(www.dc, 0, 0, (int)www.w - 1, (int)www.w - 1, 0);
+            
+
+        }
+        
+        windowss createWindow(int x, int y, int w, int h, int colorss)
+        {
+            windowss windowsss = new windowss();
+            windowsss.y = y;
+            windowsss.x = x;
+            windowsss.w = w;
+            windowsss.h = h;
+            windowsss.dc = createsbitmap((uint)windowsss.w, (uint)windowsss.h);
+           
+            windowsss.colorss = colorss;
+            fills(windowsss.dc, windowsss.colorss);
+            rets(windowsss.dc, 0, 0, (int)w - 1, (int)h - 1, 0);
+            return windowsss;
+        }
+        void rets(Bitmap b, int x, int y, int x1, int y1, int colors)
+        {
+
+            hlines(b, x, y, x1, colors);
+            hlines(b, x, y1, x1, colors);
+            vlines(b, x, y, y1, colors);
+            vlines(b, x1, y, y1, colors);
+
+
+        }
+        void boxs(Bitmap b, int x, int y, int x1, int y1, int colors)
+        {
+            int n = 0;
+
+
+            if (y1 >= y) {
+                for (n = 0; n < y1 - y; n++)
+                {
+                    hlines(b, x, y + n, x1, colors);
+                }
+            }
+        }
+        void vlines(Bitmap b, int x, int y, int y1, int colors)
+        {
+            int n = 0;
+            int[] bt = b.rawData;
+            if (x < b.Width && y < b.Height && x > -1 && y > -1 && y1 < b.Height && y1 > -1 && y1 >= y)
+            {
+                for (n = 0; n < y1 - y; n++)
+                {
+                    bt[y * b.Width + x + (n * b.Width)] = colors;
+                }
+            }
+        }
+        void hlines(Bitmap b, int x, int y, int x1, int colors)
+        {
+            int n = 0;
+            int[] bt = b.rawData;
+            if (x < b.Width && y < b.Height && x > -1 && y > -1 && x1 < b.Width && x1 > -1 && x1 >= x) {
+                for (n = 0; n < x1 - x; n++)
+                {
+                    bt[y * b.Width + x + n] = colors;
+                }
+            }
+        }
+        void psets(Bitmap b, int x, int y, int colors)
+        {
+            int n = 0;
+            int[] bt = b.rawData;
+            if (x < b.Width && y < b.Height && x > -1 && y > -1) bt[y * b.Width + x] = colors;
+        }
+        int colors(byte reds, byte greens, byte blues) {
+            return blues | greens << 8 | reds << 16;
+        }
+        Bitmap createsbitmap(uint x, uint y)
+        {
+            Bitmap bitmap = new Bitmap(x, y, ColorDepth.ColorDepth32);
+            return bitmap;
+        }
+        void fills(Bitmap b, int colors)
+        {
+            int n = 0;
+            int[] bt = b.rawData;
+            for (n = 0; n < b.Height * b.Width; n++) bt[n] = colors;
+        }
+        mmouse drawcursor()
+        {
+            Pen pen = new Pen(Color.DarkGreen);
+            int n = 0;
+            int x = 0;
+            int y = 0;
+            int xx = maxx - 1;
+            int yy = maxy - 1;
+
+            mmouse Mmouse = new mmouse();
+            int c = new Pen(Color.Black).ValueARGB;
+            if (!Mmouseini)
+            {
+                Mmouseini = true;
+                cursors = createWindow(0, 0, cursorSize, cursorSize, colors(0, (byte)parts(0xff, n), 0));
+
+                x = (int)Sys.MouseManager.X;
+                n = 0;
+                y = (int)Sys.MouseManager.Y;
+                xxxx = x;
+                yyyy = y;
+            }
+            else
+            {
+                x = (int)Sys.MouseManager.X;
+                n = 0;
+                y = (int)Sys.MouseManager.Y;
+                xxxx = x;
+                yyyy = y;
+                xxxx=x;
+                yyyy=y;
+                getCursor(cursors.dc, x, y);
+            }
+
+            
+            while (n == 0)
+            {
+                x = (int)Sys.MouseManager.X;
+                n = (int)Sys.MouseManager.MouseState;
+                y = (int)Sys.MouseManager.Y;
+                if (x != xx || y != yy)
+                {
+                    if (!c1)
+                    {
+                        xx = x;
+                        yy = y;
+                        getCursor(cursors.dc, x, y);
+                        c1 = true;
+                    }
+                    else
+                    {
+
+                        canvas.DrawImage(cursors.dc, new Point(xx, yy));
+                        getCursor(cursors.dc, x, y);
+                        canvas.DrawFilledEllipse(new Pen(colorCursor), new Point(x + (cursorSize / 2), y + (cursorSize / 2)), (cursorSize - 1) / 2, (cursorSize - 1) / 2);
+                        xx = x;
+                        yy = y;
+                        xxxx = xx;
+                        yyyy = yy;
+                        canvas.Display();
+
+                    }
+                }
+
+            }
+            Mmouse.xx = x;
+            Mmouse.yy = y;
+            Mmouse.clicks = n;
+            return Mmouse;
+        }
+        Boolean inside(int x, int y, int x1, int y1, int x2, int y2)
+        {
+            if (x > x1 && x < x2 && y > y1 && y < x2) return true;
+            return false;
+        }
+        int gettheWindows(windowss[] windowsss, int x, int y, int clicks)
+        {
+            int n = 0;
+            if (clicks != 0 && windowsss.Count() > 0)
+            {
+                for (n = windowsss.Count() - 1; n > -1; n--)
+                {
+                    if (inside(x, y, windowsss[zorder[n]].x, windowsss[zorder[n]].y, windowsss[zorder[n]].x + windowsss[zorder[n]].w, windowsss[zorder[n]].y + windowsss[zorder[n]].h)) return zorder[n];
+                    
+                }
+            }
+            return -1;
+        }
+        int findWin(int i)
+        {
+            int n=0;
+            for (n = 0; n < maxwins; n++)
+            {
+                if (zorder[n] == i) return n;
+            }
+            return -1;
+        }
+        void moveToTop(int i)
+        {
+            int n = 0;
+            int nn = 0;
+            if(i!=maxwins-1 && i > -1)
+            {
+                nn = zorder[i];
+                for (n = i; n < maxwins - 1; n++)
+                {
+                    zorder[n] = zorder[n + 1];
+                }
+                zorder[maxwins - 1] = nn;
+            }
+        }
         protected override void BeforeRun()
         {
-            Console.WriteLine("Cosmos booted successfully. Type a line of text to get it echoed back.");
+            maxx = 640;
+            maxy = 480;
+        
+            cursorSize = 8;
+            colorCursor = Color.Black;
+            desktopColor = Color.White;
+            Console.WriteLine("start.");
+            canvas = FullScreenCanvas.GetFullScreenCanvas(new Mode(maxx, maxy, ColorDepth.ColorDepth32));
+            canvas.Clear(Color.White);
+            Sys.MouseManager.ScreenHeight = (uint)(maxy - cursorSize);
+            Sys.MouseManager.ScreenWidth = (uint)(maxx - cursorSize);
+
         }
 
         protected override void Run()
         {
-            while (true)
-            {
-                graf.starts();
-                graf.canvas.Clear(Color.White);
-                while (true)
-                {
-                    Thread.Sleep(2);
-
-                    tests.mainLoop();
-
-
-
-                    ;
-
-                }
-            }
-
-
-        }
-    }
-
-
-
-
-
-    class tests
-
-
-
-    {
-
-        static int x =400, y = 0, w = 200, h = 100, xx = 0,yy=0;
-        public static void mainLoop()
-        {
-            //
-
-
+            Pen pen = new Pen(Color.DarkGreen);
+            int n = 0;
+            int x = 0;
+            int y = 0;
+            int xx = maxx - 1;
+            int yy = maxy - 1;
+            int nn = 0;
+            mmouse Mmouse = new mmouse();
             Pen p = new Pen(Color.Black, 3);
-            Pen pp = new Pen(Color.White, 3);
-            graf.canvas.DrawLine(pp, xx - 25, yy, xx + 25, yy);
-            graf.canvas.DrawLine(pp, xx, yy - 25, xx, yy + 25);
+
+            Boolean c1 = false;
+            int c = new Pen(Color.Black).ValueARGB;
+            zorder = new int[maxwins];
+            windowss[] windowsss = new windowss[1];
+
+            zorderCount = 0;
+
+
             for (int i = 0; i < 8; i++) 
             {
-                graf.canvas.DrawLine(p, new Sys.Graphics.Point(i * 128, 0), new Sys.Graphics.Point(i * 128, 799));
-                graf.canvas.DrawLine(p, new Sys.Graphics.Point(0,i * 100), new Sys.Graphics.Point(1023,i * 100));
-
+                canvas.DrawLine(p, new Sys.Graphics.Point(0,i * 60), new Sys.Graphics.Point(639,i * 60));
+                canvas.DrawLine(p, new Sys.Graphics.Point(i * 80, 0), new Sys.Graphics.Point(i * 80, 479));
             }
-            graf.canvas.DrawRectangle(p, new Sys.Graphics.Point(0, 0),1023,799);
-            if ((int)Sys.MouseManager.Y >= 0 && (int)Sys.MouseManager.X >= 0 && (int)Sys.MouseManager.Y < 800 && (int)Sys.MouseManager.X < 1024)
+            canvas.Display();
+            while (1 == 1)
             {
-                xx = (int)Sys.MouseManager.X;
-                yy = (int)Sys.MouseManager.Y;
-                graf.canvas.DrawLine(p, xx - 25, yy, xx + 25, yy);
-                graf.canvas.DrawLine(p, xx, yy - 25, xx, yy + 25);
-                x = ((int) (Sys.MouseManager.X)) / 128 * 10 ;
-                y = ((int)(Sys.MouseManager.Y)) / 100 * 100+ 200;
-                if ((int)Sys.MouseManager.MouseState == 1 )
+                Mmouse = drawcursor();
+                
+                if (Mmouse.clicks > 0)
                 {
 
 
-                    Console.Beep(y+x ,250);
+                    int ix = ((int)Sys.MouseManager.X)/80*10;
+                    int iy = ((int)Sys.MouseManager.X) / 60 * 100+200;
+                    Console.Beep(ix+iy,100);
+                    
+                    //c1 = false;
+                        
+                    
+
+
 
                 }
-                graf.displays();
             }
+            Console.ReadKey();
+
 
         }
-
+        
     }
-
-
-
-
-
-
-
 }
