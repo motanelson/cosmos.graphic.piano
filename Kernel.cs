@@ -259,17 +259,17 @@ void redrawWindow(windowss www)
         }
         protected override void BeforeRun()
         {
-            maxx = 640;
-            maxy = 480;
+            maxx = 1024;
+            maxy = 800;
         
             cursorSize = 8;
             colorCursor = Color.Black;
             desktopColor = Color.White;
-            Console.WriteLine("start.");
-            canvas = FullScreenCanvas.GetFullScreenCanvas(new Mode(maxx, maxy, ColorDepth.ColorDepth32));
+            
+            canvas = FullScreenCanvas.GetFullScreenCanvas();
             canvas.Clear(Color.White);
-            Sys.MouseManager.ScreenHeight = (uint)(maxy - cursorSize);
-            Sys.MouseManager.ScreenWidth = (uint)(maxx - cursorSize);
+            Sys.MouseManager.ScreenHeight = (uint)(maxy - cursorSize-1);
+            Sys.MouseManager.ScreenWidth = (uint)(maxx - cursorSize-1);
 
         }
 
@@ -287,7 +287,7 @@ void redrawWindow(windowss www)
 
             Boolean c1 = false;
             int c = new Pen(Color.Black).ValueARGB;
-            zorder = new int[maxwins];
+            zorder = new int[1];
             windowss[] windowsss = new windowss[1];
 
             zorderCount = 0;
@@ -295,8 +295,8 @@ void redrawWindow(windowss www)
 
             for (int i = 0; i < 8; i++) 
             {
-                canvas.DrawLine(p, new Sys.Graphics.Point(0,i * 60), new Sys.Graphics.Point(639,i * 60));
-                canvas.DrawLine(p, new Sys.Graphics.Point(i * 80, 0), new Sys.Graphics.Point(i * 80, 479));
+                canvas.DrawLine(p, new Sys.Graphics.Point(0,i * 100), new Sys.Graphics.Point(maxx-1,i * 100));
+                canvas.DrawLine(p, new Sys.Graphics.Point(i * 128, 0), new Sys.Graphics.Point(i * 128, maxy-1));
             }
             canvas.Display();
             while (1 == 1)
@@ -307,8 +307,8 @@ void redrawWindow(windowss www)
                 {
 
                     
-                    int ix =Mmouse.xx/80*10;
-                    int iy =Mmouse.yy / 60 * 100+200;
+                    int ix =Mmouse.xx/128*10;
+                    int iy =Mmouse.yy / 100 * 100+200;
                     Console.Beep(ix+iy,100);
                     
                     c1 = false;
