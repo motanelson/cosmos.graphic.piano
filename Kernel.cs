@@ -166,8 +166,8 @@ void redrawWindow(windowss www)
             int n = 0;
             int x = 0;
             int y = 0;
-            int xx = maxx - 1;
-            int yy = maxy - 1;
+            int xx = (int)Sys.MouseManager.X;
+            int yy = (int)Sys.MouseManager.Y;
 
             mmouse Mmouse = new mmouse();
             int c = new Pen(Color.Black).ValueARGB;
@@ -199,7 +199,7 @@ void redrawWindow(windowss www)
 
                         canvas.DrawImage(cursors.dc, new Point(xx, yy));
                         getCursor(cursors.dc, x, y);
-                        canvas.DrawFilledEllipse(new Pen(colorCursor), new Point(x + (cursorSize / 2), y + (cursorSize / 2)), (cursorSize - 1) / 2, (cursorSize - 1) / 2);
+                        if (n==0)canvas.DrawFilledEllipse(new Pen(colorCursor), new Point(x + (cursorSize / 2), y + (cursorSize / 2)), (cursorSize - 1) / 2, (cursorSize - 1) / 2);
                     //    
                     xx = x;
                         yy = y;
