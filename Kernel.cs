@@ -68,10 +68,10 @@ namespace Cosmosbuttons
             while (true)
             {
                 graf.starts();
-
+                graf.canvas.Clear(Color.White);
                 while (true)
                 {
-                    Thread.Sleep(200);
+                    Thread.Sleep(2);
 
                     tests.mainLoop();
 
@@ -96,15 +96,16 @@ namespace Cosmosbuttons
 
     {
 
-        static int x = 512 - 100, y = 400 - 50, w = 200, h = 100;
+        static int x =400, y = 0, w = 200, h = 100, xx = 0,yy=0;
         public static void mainLoop()
         {
             //
 
 
             Pen p = new Pen(Color.Black, 3);
-
-            graf.canvas.Clear(Color.White);
+            Pen pp = new Pen(Color.White, 3);
+            graf.canvas.DrawLine(pp, xx - 25, yy, xx + 25, yy);
+            graf.canvas.DrawLine(pp, xx, yy - 25, xx, yy + 25);
             for (int i = 0; i < 8; i++) 
             {
                 graf.canvas.DrawLine(p, new Sys.Graphics.Point(i * 128, 0), new Sys.Graphics.Point(i * 128, 799));
@@ -114,9 +115,10 @@ namespace Cosmosbuttons
             graf.canvas.DrawRectangle(p, new Sys.Graphics.Point(0, 0),1023,799);
             if ((int)Sys.MouseManager.Y >= 0 && (int)Sys.MouseManager.X >= 0 && (int)Sys.MouseManager.Y < 800 && (int)Sys.MouseManager.X < 1024)
             {
-                graf.canvas.DrawLine(p, (int)Sys.MouseManager.X - 25, (int)Sys.MouseManager.Y, (int)Sys.MouseManager.X + 25, (int)Sys.MouseManager.Y);
-                graf.canvas.DrawLine(p, (int)Sys.MouseManager.X, (int)Sys.MouseManager.Y - 25, (int)Sys.MouseManager.X, (int)Sys.MouseManager.Y + 25);
-
+                xx = (int)Sys.MouseManager.X;
+                yy = (int)Sys.MouseManager.Y;
+                graf.canvas.DrawLine(p, xx - 25, yy, xx + 25, yy);
+                graf.canvas.DrawLine(p, xx, yy - 25, xx, yy + 25);
                 x = ((int) (Sys.MouseManager.X)) / 128 * 10 ;
                 y = ((int)(Sys.MouseManager.Y)) / 100 * 100+ 200;
                 if ((int)Sys.MouseManager.MouseState == 1 )
